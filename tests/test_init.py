@@ -109,8 +109,9 @@ async def test_set_target_temperature_when_error_raised(mocked_response, client_
                                                     "value": 20.5
                                                 }))
 
+
 async def test_set_heater_power_when_successful(mocked_response, client_session,
-                                                      generic_status_ok_response):
+                                                generic_status_ok_response):
     """Test successful setting the device oil heater power."""
     mill = MillOilHeater(device_ip, client_session)
     mocked_response.post(f"{local_api_url}/oil-heater-power", status=200, payload=generic_status_ok_response)
@@ -125,7 +126,7 @@ async def test_set_heater_power_when_successful(mocked_response, client_session,
 
 
 async def test_set_heater_power_when_error_raised(mocked_response, client_session,
-                                                        generic_status_ok_response):
+                                                  generic_status_ok_response):
     """Test error raised when setting the device oil heater power."""
     mill = MillOilHeater(device_ip, client_session)
     mocked_response.post(f"{local_api_url}/oil-heater-power", status=400)
@@ -179,7 +180,7 @@ async def test_set_operation_mode_control_individually_when_successful(mocked_re
 
 
 async def test_set_operation_mode_control_individually_when_error_raised(mocked_response, client_session,
-                                                                       generic_status_ok_response):
+                                                                         generic_status_ok_response):
     """Test error raised when setting the device operation mode to 'control individually'."""
     mill = Mill(device_ip, client_session)
     mocked_response.post(f"{local_api_url}/operation-mode", status=400)
@@ -284,5 +285,8 @@ async def test_set_temperature_calibration_offset(mocked_response, client_sessio
     mill = Mill(device_ip, client_session)
     await mill.set_temperature_calibration_offset(-1.5)
 
-    (_, kwargs), = list(mocked_response.requests.values())[0]
-    assert json.loads(kwargs["data"]) == {"value": -1.5}
+    mocked_response.assert_called_once_with(
+        url=f"{local_api_url}/temperature-calibration-offset",
+        method="POST",
+        data=json.dumps({"value": -1.5})
+    )

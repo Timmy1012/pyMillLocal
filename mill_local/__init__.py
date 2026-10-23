@@ -1,12 +1,11 @@
 """Local support for Mill wifi-enabled home heaters."""
+import asyncio
 import json
 import logging
 from enum import Enum
-from typing import Union
 
 import aiohttp.client_exceptions
 from aiohttp import ClientSession
-from async_timeout import timeout
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -58,7 +57,7 @@ class Mill:
         return self._status.get("name", "")
 
     @property
-    def mac_address(self) -> Union[str, None]:
+    def mac_address(self) -> str | None:
         """Return heater MAC address."""
         return self._status.get("mac_address")
 
@@ -114,7 +113,7 @@ class Mill:
 
     async def _post_request(self, command: str, payload: dict) -> None:
         """HTTP POST request to Mill Local Api."""
-        async with timeout(self._timeout_seconds):
+        async with asyncio.timeout(self._timeout_seconds):
             async with self.websession.post(
                     url=f"{self.url}/{command}",
                     data=json.dumps(payload)
@@ -138,9 +137,9 @@ class Mill:
                     )
                     raise
 
-    async def _get_request(self, command: str) -> Union[dict, None]:
+    async def _get_request(self, command: str) -> dict | None:
         """HTTP GET request to Mill Local Api."""
-        async with timeout(self._timeout_seconds):
+        async with asyncio.timeout(self._timeout_seconds):
             async with self.websession.get(
                     url=f"{self.url}/{command}"
             ) as response:
