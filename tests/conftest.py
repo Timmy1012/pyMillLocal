@@ -1,4 +1,4 @@
-"""Test helpers """
+"""Test helpers"""
 
 import json
 import pathlib
@@ -29,7 +29,9 @@ class FakeResponse:
 
     def raise_for_status(self):
         if self.status >= 400:
-            raise ClientResponseError(self._request_info, (), status=self.status, message=self.reason)
+            raise ClientResponseError(
+                self._request_info, (), status=self.status, message=self.reason
+            )
 
 
 class MockedSession:
@@ -62,8 +64,11 @@ class MockedSession:
 @pytest.fixture
 def mocked_response():
     mock = MockedSession()
-    with patch.object(ClientSession, "get", lambda self, **kw: mock._handle("GET", **kw)), \
-            patch.object(ClientSession, "post", lambda self, **kw: mock._handle("POST", **kw)):
+    with patch.object(
+        ClientSession, "get", lambda self, **kw: mock._handle("GET", **kw)
+    ), patch.object(
+        ClientSession, "post", lambda self, **kw: mock._handle("POST", **kw)
+    ):
         yield mock
 
 

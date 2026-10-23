@@ -4,7 +4,9 @@ from setuptools import setup
 
 with pathlib.Path("requirements.txt").open() as requirements_txt:
     install_requires = [
-        line.strip() for line in requirements_txt if line.strip() and not line.startswith("#")
+        line.strip()
+        for line in requirements_txt
+        if line.strip() and not line.startswith("#")
     ]
 
 
