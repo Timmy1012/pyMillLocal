@@ -265,3 +265,24 @@ async def test_get_request_rais_error_on_400_and_500(mocked_response, client_ses
         await mill._get_request("status")
 
     assert exp_500_info.value.status == 500
+
+
+async def test_fetch_temperature_calibration_offset(mocked_response, client_session):
+    """Test GET /temperature-calibration-offset."""
+    mocked_response.get(f"{local_api_url}/temperature-calibration-offset", status=200,
+                        payload={"value": 1.5, "status": "ok"})
+
+    mill = Mill(device_ip, client_session)
+    assert (await mill.fetch_temperature_calibration_offset())["value"] == 1.5
+
+
+async def test_set_temperature_calibration_offset(mocked_response, client_session):
+    """Test POST /temperature-calibration-offset."""
+    mocked_response.post(f"{local_api_url}/temperature-calibration-offset", status=200,
+                         payload={"status": "ok"})
+
+    mill = Mill(device_ip, client_session)
+    await mill.set_temperature_calibration_offset(-1.5)
+
+    (_, kwargs), = list(mocked_response.requests.values())[0]
+    assert json.loads(kwargs["data"]) == {"value": -1.5}

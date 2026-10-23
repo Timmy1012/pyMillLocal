@@ -98,6 +98,15 @@ class Mill:
         """Get current heater state and control status."""
         return await self._get_request("control-status")
 
+    async def fetch_temperature_calibration_offset(self) -> dict:
+        """Get the current temperature calibration offset."""
+        return await self._get_request("temperature-calibration-offset")
+
+    async def set_temperature_calibration_offset(self, offset: float) -> None:
+        """Set the temperature calibration offset."""
+        _LOGGER.debug("Setting temperature calibration offset to: '%s'", offset)
+        await self._post_request(command="temperature-calibration-offset", payload={"value": offset})
+
     async def _set_operation_mode(self, mode: OperationMode) -> None:
         """Set heater operation mode."""
         _LOGGER.debug("Setting operation mode to: '%s'", mode.value)
